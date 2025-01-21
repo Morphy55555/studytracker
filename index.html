@@ -93,7 +93,7 @@
             font-size: clamp(0.8rem, 1.4vw, 1rem);
             font-weight: bold;
             width: 100%;
-            transition: all 0.3s ease;
+            transition: none;
             margin-top: auto;
             letter-spacing: 0.5px;
             background: linear-gradient(45deg, #FF4D4D, #7C3AED);
@@ -154,7 +154,7 @@
         }
 
         button {
-            background: linear-gradient(45deg, #7C3AED, #5B21B6);
+            background: linear-gradient(45deg, #3498db, #5B21B6);
             color: white;
             border: none;
             padding: clamp(4px, 0.8vw, 6px) clamp(8px, 1.5vw, 15px);
@@ -209,6 +209,8 @@
             .day strong {
                 font-size: clamp(0.5rem, 2vw, 0.7rem);
             }
+
+
         }
 
         @media (max-width: 480px) {
@@ -258,6 +260,51 @@
 
         .other-month {
             background-color: #000000;
+        }
+
+        input:focus {
+            outline: none;
+            border: 2px solid #3498db;
+            box-shadow: 0 0 5px #3498db;
+            transition: none;
+        }
+
+        input:focus-visible {
+            outline: none;
+            border: 2px solid #3498db;
+            box-shadow: 0 0 5px #3498db;
+            transition: none;
+        }
+
+        /* Pointer animation styles */
+        .pointer-container {
+            position: absolute;
+            animation: float 2s infinite ease-in-out;
+            pointer-events: none; /* Allows clicking through to elements below */
+            z-index: 1000;
+        }
+
+        .pointer {
+            width: 30px;
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233498db'%3E%3Cpath d='M7,2l12,11.2l-5.8,0.5l3.3,7.3l-2.2,1l-3.2-7.4L7,18.5V2'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .pointer-text {
+            background: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 40px;
+            white-space: nowrap;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
     </style>
     <!-- Enhanced CSP and security headers -->
@@ -640,6 +687,34 @@
             exportBtn.textContent = 'Export Data';
             exportBtn.addEventListener('click', exportData);
             document.querySelector('header').appendChild(exportBtn);
+
+            // Add pointer animation
+            function showPointer() {
+                const pointer = document.createElement('div');
+                pointer.className = 'pointer-container';
+                pointer.innerHTML = `
+                    <div class="pointer"></div>
+                    <div class="pointer-text">Put your study hours in one of these boxes, <br> happy learning!</div>
+                `;
+
+                // Position pointer near the first input
+                const firstInput = document.querySelector('input[type="number"]');
+                if (firstInput) {
+                    const rect = firstInput.getBoundingClientRect();
+                    pointer.style.left = (rect.left - -70) + 'px';
+                    pointer.style.top = (rect.top - -20) + 'px';
+                    document.body.appendChild(pointer);
+
+                    // Remove pointer on any click
+                    document.addEventListener('click', function removePointer() {
+                        pointer.remove();
+                        document.removeEventListener('click', removePointer);
+                    }, { once: true });
+                }
+            }
+
+            // Show pointer after a short delay
+            setTimeout(showPointer, 500);
         });
     </script>
 </body>
